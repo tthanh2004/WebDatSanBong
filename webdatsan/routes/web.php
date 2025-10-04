@@ -4,9 +4,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SanBongController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ThanhToanController;
-use App\Http\Controllers\Admin\KhachHangController;
 use App\Http\Controllers\Admin\SanBongAdminController;
 use App\Http\Controllers\DatSanController;
+use App\Http\Controllers\Admin\CustomerController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -48,9 +49,14 @@ Route::middleware(['auth'])->group(function () {
 // Quản trị viên
 
 
-Route::prefix('admin')->middleware(['auth', 'is_admin'])->name('admin.')->group(function () {
-    Route::resource('khach-hang', KhachHangController::class);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('khach-hang', CustomerController::class);
+    Route::get('khach-hang/{id}/lich-su-dat-san', [CustomerController::class, 'bookingHistory'])
+        ->name('khach-hang.lich-su-dat-san');
+    Route::get('khach-hang/{id}/lich-su-thanh-toan', [CustomerController::class, 'paymentHistory'])
+        ->name('khach-hang.lich-su-thanh-toan');
 });
+
 Route::prefix('admin')->middleware(['auth', 'is_admin'])->name('admin.')->group(function () {
     Route::resource('san-bong', SanBongAdminController::class);
     
