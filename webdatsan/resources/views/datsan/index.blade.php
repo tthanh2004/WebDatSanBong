@@ -29,8 +29,9 @@
                         <!-- Ngày -->
                         <p class="mb-1">
                             <i class="fas fa-calendar-alt text-info me-2"></i>
-                            {{ $ds->ngay_dat ?? 'Chưa có ngày' }}
+                            {{ $ds->ngay_dat ? \Carbon\Carbon::parse($ds->ngay_dat)->format('d/m/Y') : 'Chưa có ngày' }}
                         </p>
+
 
                         <!-- Trạng thái -->
                         <p class="mb-1">
@@ -50,7 +51,7 @@
                     @if($ds->trang_thai === 'pending')
                         <div class="card-footer bg-white border-0 d-flex gap-2">
                             <!-- Thanh toán -->
-                            <a href="{{ url('/thanh-toan') }}" 
+                            <a href="{{ route('thanh-toan.create', $ds->san_bong_id) }}" 
                             class="btn btn-primary flex-fill d-flex justify-content-center align-items-center py-2 rounded-pill">
                                 <i class="fas fa-credit-card me-2"></i> Thanh toán
                             </a>

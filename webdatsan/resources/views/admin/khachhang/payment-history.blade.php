@@ -17,6 +17,9 @@
                 <tr>
                     <td>{{ $payment->transaction_code }}</td>
                     <td>{{ number_format($payment->amount) }} đ</td>
+                    <td>
+                        {{ $booking->ngay_dat ? \Carbon\Carbon::parse($booking->ngay_dat)->format('d/m/Y') : '---' }}
+                    </td>
                     <td>{{ $payment->created_at }}</td>
                     <td>{{ $payment->method }}</td>
                 </tr>

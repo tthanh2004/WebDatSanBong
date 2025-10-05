@@ -32,13 +32,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/thanh-toan/{sanBongId}/create', [ThanhToanController::class, 'create'])->name('thanh-toan.create');
     Route::post('/thanh-toan/{sanBongId}', [ThanhToanController::class, 'store'])->name('thanh-toan.store');
     Route::post('/thanh-toan/{id}/cancel', [ThanhToanController::class, 'cancel'])->name('thanh-toan.cancel');
+
 });
 
 // Đặt Sân
 Route::middleware(['auth'])->group(function () {
     Route::get('/datsan/{sanId}/create', [DatSanController::class, 'create'])->name('datsan.create');
     Route::post('/datsan/{sanId}', [DatSanController::class, 'store'])->name('datsan.store');
-    Route::get('/san-da-dat', [DatSanController::class, 'index'])->name('sanda-dat.index');
+    Route::get('/san-da-dat', [DatSanController::class, 'index'])->name('datsan.index');
     Route::post('/huy-dat-san/{id}', [DatSanController::class, 'huyDatSan'])
     ->name('datsan.huy');
     Route::get('/dat-san/{id}/edit', [DatSanController::class, 'edit'])->name('datsan.edit')->middleware('auth');
@@ -47,8 +48,6 @@ Route::middleware(['auth'])->group(function () {
 
 
 // Quản trị viên
-
-
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('khach-hang', CustomerController::class);
     Route::get('khach-hang/{id}/lich-su-dat-san', [CustomerController::class, 'bookingHistory'])
@@ -56,6 +55,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('khach-hang/{id}/lich-su-thanh-toan', [CustomerController::class, 'paymentHistory'])
         ->name('khach-hang.lich-su-thanh-toan');
 });
+
+// Admin quản lý thanh toán
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->group(function () {
+    Route::get('/thanh-toan', [ThanhToanController::class, 'adminIndex'])->name('admin.thanh-toan.index');
+    Route::patch('/thanh-toan/{id}/approve', [ThanhToanController::class, 'approve'])->name('admin.thanh-toan.approve');
+    Route::patch('/thanh-toan/{id}/reject', [ThanhToanController::class, 'reject'])->name('admin.thanh-toan.reject');
+});
+
 
 Route::prefix('admin')->middleware(['auth', 'is_admin'])->name('admin.')->group(function () {
     Route::resource('san-bong', SanBongAdminController::class);

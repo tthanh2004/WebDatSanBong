@@ -14,7 +14,6 @@
                     <th>Số tiền</th>
                     <th>Trạng thái</th>
                     <th>Phương thức</th>
-                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,17 +30,7 @@
                                 <span class="badge bg-danger">Đã hủy</span>
                             @endif
                         </td>
-                        <td>{{ strtoupper($gd->phuong_thuc) }}</td>
-                        <td>
-                            @if($gd->trang_thai === 'pending')
-                                <form action="{{ route('thanh-toan.cancel', $gd->_id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-danger">Hủy</button>
-                                </form>
-                            @else
-                                <span>-</span>
-                            @endif
-                        </td>
+                        <td>{{ mb_strtoupper($gd->phuong_thuc, 'UTF-8') }}</td>
                     </tr>
                 @endforeach
             </tbody>

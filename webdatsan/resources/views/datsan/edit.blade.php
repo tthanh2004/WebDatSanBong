@@ -93,7 +93,7 @@
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-save me-2"></i> Cập nhật
         </button>
-        <a href="{{ route('sanda-dat.index') }}" class="btn btn-secondary">Quay lại</a>
+        <a href="{{ route('datsan.index') }}" class="btn btn-secondary">Quay lại</a>
     </form>
 </div>
 @endsection

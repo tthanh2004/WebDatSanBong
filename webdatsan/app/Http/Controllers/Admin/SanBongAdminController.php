@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use App\Models\SanBong;
+use App\Models\DatSan;
 
 class SanBongAdminController extends Controller
 {
@@ -98,14 +99,27 @@ class SanBongAdminController extends Controller
         return redirect()->route('admin.sanbong.index')->with('success', 'Xóa sân bóng thành công');
     }
 
-    // Chuyển trạng thái (active / inactive)
     public function toggleStatus($id)
     {
         $sanBong = SanBong::findOrFail($id);
 
-        $sanBong->status = $sanBong->status === 'inactive' ? 'available' : 'inactive';
+        // Kiểm tra sân có lịch đặt chưa thanh toán hoặc đã thanh toán (trạng thái pending / paid)
+        $hasBooking = DatSan::where('san_bong_id', (string) $sanBong->_id)
+            ->whereIn('trang_thai', ['pending', 'paid'])
+            ->exists();
+
+        // Nếu muốn tạm dừng (status = available -> inactive) mà có booking thì chặn
+        if ($sanBong->status === 'available' && $hasBooking) {
+            return redirect()->route('admin.san-bong.index')
+                ->with('error', 'Sân đang có người đặt, không thể tạm dừng!');
+        }
+
+        // Đổi trạng thái
+        $sanBong->status = $sanBong->status === 'available' ? 'inactive' : 'available';
         $sanBong->save();
 
-        return redirect()->route('admin.sanbong.index')->with('success', 'Cập nhật trạng thái sân thành công');
+        return redirect()->route('admin.san-bong.index')
+            ->with('success', 'Cập nhật trạng thái sân thành công.');
     }
+
 }

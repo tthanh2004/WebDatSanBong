@@ -17,6 +17,7 @@ class DatSan extends Model
         'san_bong_id',    // Mã sân
         'ten_san',
         'loai_san',
+        'ngay_dat',
         'gio_bat_dau',
         'gio_ket_thuc',
         'trang_thai',     // pending / success / cancelled
@@ -31,4 +32,11 @@ class DatSan extends Model
     {
         return $this->belongsTo(SanBong::class, 'san_bong_id', '_id');
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'ma_khach_hang', 'ma_khach_hang');
+    }
+    
 }
+

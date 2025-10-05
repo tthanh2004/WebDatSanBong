@@ -55,9 +55,13 @@ class CustomerController extends Controller
     public function bookingHistory(string $id)
     {
         $customer = Customer::findOrFail($id);
-        $bookings = $customer->bookings ?? []; // Quan hệ cần định nghĩa trong Model
+
+        // lấy tất cả đặt sân theo ma_khach_hang
+        $bookings = $customer->datSans()->with('sanBong')->get();
+
         return view('admin.khachhang.booking-history', compact('customer', 'bookings'));
     }
+
 
     /** Lịch sử thanh toán */
     public function paymentHistory(string $id)
@@ -67,26 +71,35 @@ class CustomerController extends Controller
         return view('admin.khachhang.payment-history', compact('customer', 'payments'));
     }
 
-    public function store(StoreCustomerRequest $request)
+   public function store(StoreCustomerRequest $request)
     {
-        $user = User::create([
-        'name'     => $request->name,
-        'email'    => $request->email,
-        'role'     => 'user',
-        'password' => Hash::make('123456'),
-        ]);
+        // Kiểm tra hoặc tạo user
+        $user = User::firstOrCreate(
+            ['email' => $request->email], // điều kiện duy nhất
+            [
+                'ma_khach_hang' => $request->ma_khach_hang,
+                'name'          => $request->name,
+                'role'          => 'user',
+                'password'      => Hash::make('123456'),
+            ]
+        );
 
-        Customer::create([
-            'ma_khach_hang' => $request->ma_khach_hang,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'address' => $request->address,
-        ]);
+        // Tạo customer nếu chưa có
+        $customer = Customer::firstOrCreate(
+            ['user_id' => (string) $user->_id], // điều kiện duy nhất gắn với user
+            [
+                'ma_khach_hang' => $request->ma_khach_hang,
+                'name'          => $request->name,
+                'phone'         => $request->phone,
+                'email'         => $request->email,
+                'address'       => $request->address,
+            ]
+        );
 
         return redirect()->route('admin.khach-hang.index')
                         ->with('success', 'Thêm khách hàng thành công!');
     }
+
 
 
     public function create()

@@ -6,48 +6,52 @@ use Illuminate\Http\Request;
 use App\Models\DatSan;
 use App\Models\SanBong;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreDatSanRequest;
+use App\Models\Customer;
 
 class DatSanController extends Controller
 {
     public function create($sanId)
     {
         $san = SanBong::findOrFail($sanId);
-        $user = Auth::user();
+        $user = auth()->user();
 
-        return view('datsan.create', compact('san', 'user'));
+        // lấy customer theo email hoặc user_id
+        $customer = Customer::where('email', $user->email)->first();
+
+        return view('datsan.create', compact('san', 'user', 'customer'));
     }
 
-    public function store(Request $request, $sanId)
+
+
+    public function store(StoreDatSanRequest $request, $sanId)
     {
         $san = SanBong::findOrFail($sanId);
-        $user = Auth::user();
+        $user = auth()->user(); // đã đăng nhập
 
-        $request->validate([
-            'gio_bat_dau' => 'required|date_format:H:i',
-            'gio_ket_thuc' => 'required|date_format:H:i|after:gio_bat_dau',
-        ]);
-
+        // Kiểm tra giờ trong khung giờ sân
         if ($request->gio_bat_dau < $san->start_time || $request->gio_ket_thuc > $san->end_time) {
-            return back()->withErrors(['error' => 'Giờ thuê phải nằm trong giờ hoạt động của sân.']);
+            return back()->withErrors(['error' => 'Giờ thuê phải nằm trong giờ hoạt động của sân.'])->withInput();
         }
 
         DatSan::create([
-            'user_id'       => $user->_id,
-            'ho_ten'        => $user->name,
-            'so_dien_thoai' => $user->so_dien_thoai ?? '',
-            'email'         => $user->email,
-            'ma_khach_hang' => $user->ma_khach_hang ?? '',
-            'san_bong_id'   => $san->_id,
+            'user_id'       => (string) $user->_id,
+            'ho_ten'        => $request->ho_ten,
+            'so_dien_thoai' => $request->so_dien_thoai,
+            'email'         => $request->email,
+            'ma_khach_hang' => $customer->ma_khach_hang ?? '',
+            'san_bong_id'   => (string) $san->_id,
             'ten_san'       => $san->ten_san,
             'loai_san'      => $san->loai_san,
+            'ngay_dat'      => $request->ngay_dat,
             'gio_bat_dau'   => $request->gio_bat_dau,
             'gio_ket_thuc'  => $request->gio_ket_thuc,
             'trang_thai'    => 'pending',
         ]);
 
-        return redirect()->route('sanda-dat.index')
-                         ->with('success', 'Bạn đã đặt sân thành công, vui lòng thanh toán.');
+        return redirect()->route('datsan.index')->with('success', 'Đặt sân thành công!');
     }
+
 
     public function index()
     {
@@ -107,7 +111,7 @@ class DatSanController extends Controller
             'gio_ket_thuc' => $request->gio_ket_thuc,
         ]);
 
-        return redirect()->route('sanda-dat.index')->with('success', 'Cập nhật thông tin đặt sân thành công.');
+        return redirect()->route('datsan.index')->with('success', 'Cập nhật thông tin đặt sân thành công.');
     }
 
 

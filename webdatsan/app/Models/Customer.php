@@ -27,4 +27,10 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class, 'user_id', '_id');
     }
+
+    public function datSans()
+    {
+        return $this->hasMany(DatSan::class, 'ma_khach_hang', 'ma_khach_hang');
+    }
+
 }

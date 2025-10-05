@@ -128,6 +128,13 @@
                                                 <span>Quản lý tài khoản</span>
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center py-2 rounded {{ request()->is('admin/thanh-toan') ? 'active' : '' }}"
+                                            href="{{ url('/admin/thanh-toan') }}">
+                                                <i class="fas fa-credit-card me-3 text-warning fs-5"></i>
+                                                <span>Quản lý thanh toán</span>
+                                            </a>
+                                        </li>
                                     @endif
 
                                     <li><hr class="dropdown-divider"></li>

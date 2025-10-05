@@ -35,7 +35,7 @@
                             </p>
                             <p class="mb-1">
                                 <i class="fas fa-clock me-1 text-primary"></i>
-                                {{ $san->gio_bat_dau }} - {{ $san->gio_ket_thuc }}
+                                {{ $san->start_time }} - {{ $san->end_time }}
                             </p>
                             <p class="text-success fw-bold mb-2">
                                 <i class="fas fa-money-bill-wave me-1"></i>

@@ -2,6 +2,14 @@
 
 @section('content')
 <div class="container">
+    @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
     <h2 class="mb-4 fw-bold text-success">
         <i class="fas fa-futbol me-2"></i> Quản lý sân bóng
     </h2>
@@ -35,9 +43,9 @@
                         <td>{{ number_format($field->gia_thue, 0, ',', '.') }} đ</td>
                         <td>
                             @if($field->status === 'available')
-                                <span class="badge bg-success">Còn trống</span>
+                                <span class="badge bg-success">Hoạt động</span>
                             @else
-                                <span class="badge bg-danger">Đã đặt</span>
+                                <span class="badge bg-danger">Tạm dừng</span>
                             @endif
                         </td>
                         <td class="text-center">
