@@ -39,10 +39,25 @@
 
         <div class="mb-3">
             <label class="form-label fw-bold">Mã khách hàng</label>
-            <input type="text" name="ma_khach_hang" 
-                value="{{ old('ma_khach_hang', $customer->ma_khach_hang ?? '') }}" 
-                class="form-control" readonly>
+            @if(Auth::user()->role === 'admin')
+                <select name="ma_khach_hang" class="form-control">
+                    <option value="">-- Chọn khách hàng --</option>
+                    @foreach($customers as $cus)
+                        <option value="{{ $cus->ma_khach_hang }}" 
+                            {{ old('ma_khach_hang') == $cus->ma_khach_hang ? 'selected' : '' }}>
+                            {{ $cus->ma_khach_hang }} - {{ $cus->ten_khach_hang }}
+                        </option>
+                    @endforeach
+                </select>
+            @else
+                <input type="text" name="ma_khach_hang" 
+                    value="{{ old('ma_khach_hang', $customers->first()->ma_khach_hang ?? '') }}" 
+                    class="form-control" readonly>
+            @endif
+
+
         </div>
+
 
         {{-- Thông tin sân --}}
         <div class="mb-3">

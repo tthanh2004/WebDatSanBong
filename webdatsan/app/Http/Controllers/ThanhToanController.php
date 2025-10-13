@@ -28,20 +28,36 @@ class ThanhToanController extends Controller
 
         // Kiểm tra số tiền phải khớp
         if ((int)$request->so_tien !== (int)$san->gia_thue) {
-            return back()->withErrors(['so_tien' => 'Số tiền phải bằng giá thuê của sân.'])->withInput();
+            return back()->withErrors([
+                'so_tien' => 'Số tiền phải bằng giá thuê của sân.'
+            ])->withInput();
         }
 
-        ThanhToan::create([
-            'user_id'        => Auth::id(),
-            'san_bong_id'    => $san->_id,
-            'so_tien'        => $request->so_tien,
-            'trang_thai'     => 'pending',
-            'phuong_thuc'    => $request->phuong_thuc,
-            'ngay_thanh_toan'=> now(),
+        // Tạo giao dịch thanh toán
+        $thanhToan = ThanhToan::create([
+            'user_id'         => Auth::id(),
+            'san_bong_id'     => $san->_id,
+            'so_tien'         => $request->so_tien,
+            'trang_thai'      => 'success', // đã thanh toán thành công
+            'phuong_thuc'     => $request->phuong_thuc,
+            'ngay_thanh_toan' => now(),
         ]);
 
-        return redirect()->route('thanh-toan.index')->with('success', 'Thanh toán thành công!');
+        // Cập nhật trạng thái đặt sân tương ứng
+        $datSan = DatSan::where('san_bong_id', $san->_id)
+                    ->where('user_id', Auth::id())
+                    ->where('trang_thai', 'pending')
+                    ->latest()
+                    ->first();
+
+        if ($datSan) {
+            $datSan->update(['trang_thai' => 'success']);
+        }
+
+        return redirect()->route('thanh-toan.index')
+                        ->with('success', 'Thanh toán thành công!');
     }
+
 
     public function index()
     {
