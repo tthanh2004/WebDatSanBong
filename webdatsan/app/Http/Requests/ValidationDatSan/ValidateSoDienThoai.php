@@ -1,31 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Validations;
+namespace App\Http\Requests\ValidationDatSan;
+
 
 use Illuminate\Contracts\Validation\Rule;
 
-/**
- * Trait gom rule & message cho số điện thoại
- */
-trait ValidateSoDienThoai
-{
-    public function soDienThoaiRules(): array
-    {
-        return [
-            'so_dien_thoai' => 'required',      //1
-            new ValidSoDienThoai(),             //2
-        ];
-    }
 
-    public function soDienThoaiMessages(): array
-    {
-        return [
-            'so_dien_thoai.required' => 'Số điện thoại không được để trống (Lỗi 1E4).',     //3
-        ];
-    }
-}
-
-class ValidSoDienThoai implements Rule
+class ValidateSoDienThoai implements Rule
 {
     protected string $errorCode = '';       //4
 

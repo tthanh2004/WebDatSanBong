@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Requests\Validations;
+namespace App\Http\Requests\ValidationDatSan;
+
 
 use Illuminate\Contracts\Validation\Rule;
 use App\Models\DatSan;
